@@ -62,6 +62,8 @@ int ARCsearch_Cmd(char **argv,unsigned short argc);
 #define ARC_SPI_COMMAND             {"SPI","addr [len]\r\n\t""Send data using SPI.",spiCmd}
 #define ARC_ASYNC_PROXY_COMMAND     {"async","[addr]\r\n\t""Open connection if address given. otherwise close connection.",asyncProxyCmd}
 #define ARC_SEARCH_COMMAND          {"search","\r\n\t""Find devices on the bus",ARCsearch_Cmd}
+            
+#define ARC_COMMANDS                 ARC_RESET_COMMAND,ARC_TIME_COMMAND,ARC_TX_COMMAND,ARC_SPI_COMMAND,ARC_SEARCH_COMMAND 
 
 //Crossworks Tasking Library commands
 int priorityCmd(char **argv,unsigned short argc);
@@ -73,6 +75,8 @@ int stackCmd(char **argv,unsigned short argc);
 #define CTL_TIMESLICE_COMMAND       {"timeslice"," [period]\r\n\t""Get/set ctl_timeslice_period.",timesliceCmd}
 #define CTL_STATS_COMMAND           {"stats","\r\n\t""Print task status",statsCmd}
 #define CTL_STACK_COMMAND           {"stack","\r\n\t""Print task stack status",stackCmd}
+        
+#define CTL_COMMANDS                CTL_PRIORITY_COMMAND,CTL_TIMESLICE_COMMAND,CTL_STATS_COMMAND,CTL_STACK_COMMAND
 
 //ErrorLib commands
 int replayCmd(char **argv,unsigned short argc);
@@ -80,7 +84,8 @@ int clearErrCmd(char **argv,unsigned short argc);
 
 #define CLEAR_ERROR_COMMAND         {"clear","\r\n\t""Clear all saved errors on the SD card",clearErrCmd}
 #define REPLAY_ERROR_COMMAND        {"replay","\r\n\t""Replay errors from log",replayCmd}
-  
+
+#define ERROR_COMMANDS              CLEAR_ERROR_COMMAND,REPLAY_ERROR_COMMAND
 
 //helper functions
 unsigned char getI2C_addr(char *str,short res,const SYM_ADDR *syms);
