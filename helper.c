@@ -12,7 +12,7 @@ const SYM_ADDR busAddrSym[]= {{"LEDL",BUS_ADDR_LEDL},
                               {"IMG",BUS_ADDR_IMG},
                               {"CDH",BUS_ADDR_CDH},
                               {"GC",BUS_ADDR_GC},
-                              {NULL,0}};
+                              {NULL,0xFF}};
               
 const SYM_ADDR magAddrSym[]= {{"X+",0x14},
                               {"X-",0x16},
@@ -20,7 +20,7 @@ const SYM_ADDR magAddrSym[]= {{"X+",0x14},
                               {"Y-",0x34},
                               {"Z+",0x25},
                               {"Z-",0x24},
-                              {NULL,0}};
+                              {NULL,0xFF}};
                                                            
 const SYM_ADDR tempAddrSym[]={{"X+",0x48},
                               {"X-",0x4A},
@@ -29,13 +29,13 @@ const SYM_ADDR tempAddrSym[]={{"X+",0x48},
                               {"Z+",0x4E},
                               {"Z-",0x4D},
                               {"Tb",0x4F},
-                              {NULL,0}};
+                              {NULL,0xFF}};
                                                                            
 //helper function to lookup addresses given a symbolic name
 unsigned char I2C_addr_lookup(const char *str,const SYM_ADDR *syms){
   int i;
   //look for a match
-  for(i=0;syms[i].name!=NULL && syms[i].addr!=0;i++){
+  for(i=0;syms[i].name!=NULL && syms[i].addr!=0xFF;i++){
     if(!strcmp(str,syms[i].name)){
       return syms[i].addr;
     }
