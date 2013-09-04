@@ -276,6 +276,8 @@ int asyncProxyCmd(char **argv,unsigned short argc){
 int ARCsearch_Cmd(char **argv,unsigned short argc){
   //data for dummy command
   unsigned char buff[BUS_I2C_CRC_LEN+BUS_I2C_HDR_LEN],*ptr,*end;
+  //symbolic name of subsystem
+  const char* name;
   int i,ret,found=0;
   //setup bogus command
   //TODO: perhaps there should be a PING command that is sort of a no-operation command
@@ -285,7 +287,12 @@ int ARCsearch_Cmd(char **argv,unsigned short argc){
     //send command
     ret=BUS_cmd_tx(i,buff,0,0,BUS_I2C_SEND_FOREGROUND);
     if(ret==RET_SUCCESS){
-      printf("Device Found at ADDR = 0x%02X\r\n",i);
+      name=I2C_addr_revlookup(i,busAddrSym);
+      if(name!=NULL){
+        printf("Device Found at ADDR = 0x%02X (%s)\r\n",i,name);
+      }else{
+        printf("Device Found at ADDR = 0x%02X\r\n",i);
+      }
       found++;
     }else if(ret!=ERR_I2C_NACK){
       printf("Error sending to addr 0x%02X : %s\r\n",i,BUS_error_str(ret));

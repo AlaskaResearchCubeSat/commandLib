@@ -30,12 +30,38 @@ const SYM_ADDR tempAddrSym[]={{"X+",0x48},
                               {"Z-",0x4D},
                               {"Tb",0x4F},
                               {NULL,0}};
+                                                                           
+//helper function to lookup addresses given a symbolic name
+unsigned char I2C_addr_lookup(const char *str,const SYM_ADDR *syms){
+  int i;
+  //look for a match
+  for(i=0;syms[i].name!=NULL && syms[i].addr!=0;i++){
+    if(!strcmp(str,syms[i].name)){
+      return syms[i].addr;
+    }
+  }
+  //nothing found
+  return 0xFF;
+}      
+
+//helper function to lookup symbolic name given an address
+const char *I2C_addr_revlookup(char addr,const SYM_ADDR *syms){
+  int i;
+  //look for a match
+  for(i=0;syms[i].name!=NULL && syms[i].addr!=0;i++){
+    if(syms[i].addr==addr){
+      return syms[i].name;
+    }
+  }
+  //nothing found
+  return NULL;
+}
 
 //helper function to parse I2C address
 //if res is true reject reserved addresses
-unsigned char getI2C_addr(char *str,short res,const SYM_ADDR *syms){
+unsigned char getI2C_addr(const char *str,short res,const SYM_ADDR *syms){
   unsigned long addr;
-  unsigned char tmp;\
+  unsigned char tmp;
   int i;
   char *end;
   //attempt to parse a numeric address
@@ -44,10 +70,12 @@ unsigned char getI2C_addr(char *str,short res,const SYM_ADDR *syms){
   if(end==str){
     //check for symbolic matches
     if(syms!=NULL){
-      for(i=0;syms[i].name!=NULL && syms[i].addr!=0;i++){
-        if(!strcmp(str,syms[i].name)){
-          return syms[i].addr;
-        }
+      //lookup address
+      addr=I2C_addr_lookup(str,syms);
+      //check if match was found
+      if(addr!=0xFF){
+        //return match
+        return addr;
       }
     }
     //not a known address, error
