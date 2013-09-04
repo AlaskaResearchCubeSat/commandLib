@@ -66,7 +66,7 @@ int timesliceCmd(char **argv,unsigned short argc){
     ctl_timeslice_period=val;
     ctl_global_interrupts_set(en);
   }
-  printf("ctl_timeslice_period = %ul\r\n",ctl_timeslice_period);
+  printf("ctl_timeslice_period = %lu\r\n",ctl_timeslice_period);
   return 0;
 }
 
