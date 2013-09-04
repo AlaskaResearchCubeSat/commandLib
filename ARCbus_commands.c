@@ -200,8 +200,6 @@ int spiCmd(char **argv,unsigned short argc){
 
 //connect to a remote board via async
 int asyncProxyCmd(char **argv,unsigned short argc){
-   //TODO: do this better
-   extern int remote;
    char c;
    int err;
    CTL_EVENT_SET_t e=0,evt;
@@ -230,8 +228,6 @@ int asyncProxyCmd(char **argv,unsigned short argc){
     async_setup_events(&e,0,1<<0);
     UCA1_setup_events(&e,0,1<<1);
     async_setup_close_event(&e,1<<2);
-    //stop printf from printing to UART
-    remote=1;
     for(;;){
       //wait for event
       evt=ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS,&e,0x07,CTL_TIMEOUT_NONE,0);
@@ -243,8 +239,6 @@ int asyncProxyCmd(char **argv,unsigned short argc){
         if(c==0x03){
           //close connection
           async_close();
-          //allow printf to work
-          remote=0;
           //print message
           printf("\r\nConnection terminated by user\r\n");
           //exit loop
@@ -261,8 +255,6 @@ int asyncProxyCmd(char **argv,unsigned short argc){
         UCA1_TxChar(c);
       }
       if(evt&(1<<2)){
-        //allow printf to work
-        remote=0;
         //print message
         printf("\r\nconnection closed remotely\r\n");
         //exit loop
