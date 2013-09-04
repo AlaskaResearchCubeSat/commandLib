@@ -45,7 +45,7 @@ unsigned char I2C_addr_lookup(const char *str,const SYM_ADDR *syms){
 }      
 
 //helper function to lookup symbolic name given an address
-const char *I2C_addr_revlookup(char addr,const SYM_ADDR *syms){
+const char *I2C_addr_revlookup(unsigned char addr,const SYM_ADDR *syms){
   int i;
   //look for a match
   for(i=0;syms[i].name!=NULL && syms[i].addr!=0;i++){

@@ -96,7 +96,7 @@ unsigned char getI2C_addr(const char *str,short res,const SYM_ADDR *syms);
 unsigned char I2C_addr_lookup(const char *str,const SYM_ADDR *syms);
 
 //helper function to lookup symbolic name given an address
-const char *I2C_addr_revlookup(char addr,const SYM_ADDR *syms);
+const char *I2C_addr_revlookup(unsigned char addr,const SYM_ADDR *syms);
 
 #endif
   
