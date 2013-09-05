@@ -85,9 +85,22 @@ int logCmd(char **argv,unsigned short argc);
 
 #define CLEAR_ERROR_COMMAND         {"clear","\r\n\t""Clear all saved errors on the SD card",clearErrCmd}
 #define REPLAY_ERROR_COMMAND        {"replay","\r\n\t""Replay errors from log",replayCmd}
-#define ERROR_LOG_LEVEL_COMMAND     {"log","[level]\r\n\t""get/set log level",logCmd},
+#define ERROR_LOG_LEVEL_COMMAND     {"log","[level]\r\n\t""get/set log level",logCmd}
 
 #define ERROR_COMMANDS              CLEAR_ERROR_COMMAND,REPLAY_ERROR_COMMAND,ERROR_LOG_LEVEL_COMMAND
+
+//I2C commands
+int I2C_txCmd(char **argv,unsigned short argc);
+int I2C_rxCmd(char **argv,unsigned short argc);
+int I2C_txrxCmd(char **argv,unsigned short argc);
+int I2C_scan_Cmd(char **argv,unsigned short argc);
+        
+#define I2C_TX_COMMAND              {"I2Ctx"," addr [[data0] [data1]...]\r\n\t""send data over I2C to an address",I2C_txCmd}
+#define I2C_RX_COMMAND              {"I2Crx"," addr num\r\n\t""get num bytes of data over I2C from an addresed slave",I2C_rxCmd}
+#define I2C_TXRX_COMMAND            {"I2Ctxrx"," addr num [[data0] [data1]...]\r\n\t""send data over I2C then recive num bytes",I2C_txrxCmd}
+#define I2C_SCAN_COMMAND            {"I2Cscan","\r\nScan I2C bus for devices",I2C_scan_Cmd}
+                
+#define I2C_COMMANDS                I2C_TX_COMMAND,I2C_RX_COMMAND,I2C_TXRX_COMMAND,I2C_SCAN_COMMAND
 
 //helper functions
 

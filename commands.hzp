@@ -10,6 +10,7 @@
       <file file_name="ARCbus_commands.c"/>
       <file file_name="CTL_commands.c"/>
       <file file_name="error_commands.c"/>
+      <file file_name="I2C_commands.c"/>
     </folder>
   </project>
   <configuration Name="MSP430 Debug" inherited_configurations="MSP430;Debug"/>
