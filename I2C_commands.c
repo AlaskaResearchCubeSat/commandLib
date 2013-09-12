@@ -13,11 +13,11 @@ int I2C_scan_Cmd(char **argv,unsigned short argc){
     if(res>=0){
       //device found, see if it is one that we recognize
       if((name=I2C_addr_revlookup(i,magAddrSym))){
-        printf("Device Found at : %i (Mag %s)\r\n",i,name);
+        printf("Device Found at : %02X (Mag %s)\r\n",i,name);
       }else if((name=I2C_addr_revlookup(i,tempAddrSym))){
-        printf("Device Found at : %i (Temp %s)\r\n",i,name);
+        printf("Device Found at : %02X (Temp %s)\r\n",i,name);
       }else{
-        printf("Device Found at : %i\r\n",i);
+        printf("Device Found at : %02X\r\n",i);
       }
       //count the number of found devices
       found++;
