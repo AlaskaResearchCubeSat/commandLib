@@ -27,6 +27,7 @@ int logCmd(char **argv,unsigned short argc){
   const unsigned char logLevels[]={ERR_LEV_DEBUG,ERR_LEV_INFO,ERR_LEV_WARNING,ERR_LEV_ERROR,ERR_LEV_CRITICAL};
   const char *(levelNames[])={"debug","info","warn","error","critical"};
   int found,i;
+  char *end;
   unsigned char level;
   //check for too many arguments
   if(argc>1){
@@ -41,22 +42,32 @@ int logCmd(char **argv,unsigned short argc){
         printf("% 3u - %s\r\n",logLevels[i],levelNames[i]);
        }
        return 0;
-    }
-    //check for matching level names
-    for(i=0;i<sizeof(logLevels)/sizeof(logLevels[0]);i++){
-      if(!strcmp(levelNames[i],argv[1])){
-        //match found
-        found=1;
-        //set log level
-        level=logLevels[i];
-        //done
-        break;
+    }    
+    //attempt to parse a numeric address
+    level=strtol(argv[1],&end,0);
+    //check for errors
+    if(end==argv[1]){
+      //check for matching level names
+      for(i=0,found=0;i<sizeof(logLevels)/sizeof(logLevels[0]);i++){
+        if(!strcmp(levelNames[i],argv[1])){
+          //match found
+          found=1;
+          //set log level
+          level=logLevels[i];
+          //done
+          break;
+        }
       }
-    }
-    //check if there was a matching name
-    if(!found){
-      //get convert to integer
-      level=atoi(argv[1]);
+      if(!found){
+        printf("Error : Could not parse log level \"%s\"\r\n",argv[1]);
+        return -2;
+      }
+    }else{
+      //check for suffix
+      if(*end!=0){
+        printf("Error : unknown sufix \"%s\" at end of log level\r\n",end);
+        return -3;
+      }
     }
     //set log level
     set_error_level(level);
