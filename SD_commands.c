@@ -142,6 +142,56 @@ int mmc_dump(char **argv, unsigned short argc){
   return 0;
 }
 
+//prototype for __putchar. why is this not in stdio.h?
+int __putchar(int ch);
+
+int mmcdat_Cmd(char **argv, unsigned short argc){
+  int resp; 
+  char *buffer=NULL;
+  unsigned long sector=0;
+  unsigned int check;
+  int i;
+  //check if sector given
+  if(argc!=0){
+    //read sector
+    if(1!=sscanf(argv[1],"%lu",&sector)){
+      //print error
+      printf("Error parsing sector \"%s\"\r\n",argv[1]);
+      return -1;
+    }
+  }
+  //get buffer, set a timeout of 2 secconds
+  buffer=BUS_get_buffer(CTL_TIMEOUT_DELAY,2048);
+  //check for error
+  if(buffer==NULL){
+    printf("Error : Timeout while waiting for buffer.\r\n");
+    return -1;
+  }
+  //read from SD card
+  resp=mmcReadBlock(sector,(unsigned char*)buffer);
+  //check if command was successful
+  if(resp){
+      printf("%s\r\n",SD_error_str(resp));
+      //free buffer
+      BUS_free_buffer();
+      //return
+      return resp;
+  }
+  //print sector 
+  printf("Sending MMC block %lu\r\n",sector);
+  //initialize check
+  check=0;
+  //print out buffer
+  for(i=0;i<512;i++){
+    putchar(buffer[i]);
+    check=check+buffer[i];
+  }
+  printf("Check =  %u\r\n",check);
+  //free buffer
+  BUS_free_buffer();
+  return 0;
+}
+
 //read card size
 int mmc_cardSize(char **argv, unsigned short argc){
   unsigned long size;

@@ -23,6 +23,7 @@ int mmcInitChkCmd(char**argv,unsigned short argc);
 int mmc_write(char **argv, unsigned short argc);
 int mmc_read(char **argv, unsigned short argc);
 int mmc_dump(char **argv, unsigned short argc);
+int mmcdat_Cmd(char **argv, unsigned short argc);
 int mmc_cardSize(char **argv, unsigned short argc);
 int mmc_eraseCmd(char **argv, unsigned short argc);
 int mmc_TstCmd(char **argv, unsigned short argc);
@@ -35,7 +36,8 @@ int mmcreg_Cmd(char**argv,unsigned short argc);
 #define MMC_INIT_CHECK_COMMAND        {"mmcinitchk","\r\n\t""Check if the SD card is initialized",mmcInitChkCmd}
 #define MMC_WRITE_COMMAND             {"mmcw","[data,..]\r\n\t""write data to mmc card.",mmc_write}
 #define MMC_READ_COMMAND              {"mmcr","\r\n\t""read string from mmc card.",mmc_read}
-#define MMC_DUMP_COMMAND              {"mmcdump","[sector]\r\n\t""dump a sector from MMC card.",mmc_dump}
+#define MMC_DUMP_COMMAND              {"mmcdump","[sector]\r\n\t""dump a sector from MMC card formatted as text.",mmc_dump}
+#define MMC_DAT_COMMAND               {"mmcdat","[sector]\r\n\t""read a sector from MMC card and send out raw data. Best used with accompanying Matlab function.",mmcdat_Cmd}
 #define MMC_CARD_SIZE_COMMAND         {"mmcsize","\r\n\t""get card size.",mmc_cardSize}
 #define MMC_ERASE_COMMAND             {"mmce","start end\r\n\t""erase sectors from start to end",mmc_eraseCmd}
 #define MMC_TEST_COMMAND              {"mmctst","start end [seed]\r\n\t""Test by writing to blocks from start to end.",mmc_TstCmd}
@@ -46,7 +48,7 @@ int mmcreg_Cmd(char**argv,unsigned short argc);
 #define MMC_REG_COMMAND               {"mmcreg","[CID|CSD]\r\n\t""Read SD card registers.",mmcreg_Cmd}
 
 //all SD card commands
-#define MMC_COMMANDS                  MMC_INIT_CHECK_COMMAND,MMC_WRITE_COMMAND,MMC_READ_COMMAND,MMC_DUMP_COMMAND,MMC_CARD_SIZE_COMMAND,MMC_ERASE_COMMAND,MMC_TEST_COMMAND,MMC_MW_TEST_COMMAND,MMC_MR_TEST_COMMAND,MMC_INIT_COMMAND,MMC_DMA_COMMAND,MMC_REG_COMMAND
+#define MMC_COMMANDS                  MMC_INIT_CHECK_COMMAND,MMC_WRITE_COMMAND,MMC_READ_COMMAND,MMC_DUMP_COMMAND,MMC_DAT_COMMAND,MMC_CARD_SIZE_COMMAND,MMC_ERASE_COMMAND,MMC_TEST_COMMAND,MMC_MW_TEST_COMMAND,MMC_MR_TEST_COMMAND,MMC_INIT_COMMAND,MMC_DMA_COMMAND,MMC_REG_COMMAND
 
 //ARCbus commands
 int restCmd(char **argv,unsigned short argc);
