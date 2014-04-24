@@ -5,3 +5,6 @@
 #build directories
 MSP430 Debug/
 MSP430 Release/
+
+#matlab backup files
+*.asv
