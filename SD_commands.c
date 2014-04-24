@@ -114,7 +114,7 @@ int mmc_dump(char **argv, unsigned short argc){
   //check if sector given
   if(argc!=0){
     //read sector
-    if(1!=sscanf(argv[1],"%ul",&sector)){
+    if(1!=sscanf(argv[1],"%lu",&sector)){
       //print error
       printf("Error parsing sector \"%s\"\r\n",argv[1]);
       return -1;
