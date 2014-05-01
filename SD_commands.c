@@ -534,3 +534,79 @@ int mmcreg_Cmd(char**argv,unsigned short argc){
   return 0;
 }
 
+int mmcdread_Cmd(char **argv, unsigned short argc){
+  int resp; 
+  char *buffer=NULL;
+  unsigned long sector;
+  unsigned int length,written;
+  unsigned short check;
+  //buffer size is not a multiple of 512, so find a size that is
+  const unsigned short buffsize=512*(BUS_get_buffer_size()/512);
+  int i;
+  //check for arguments
+  if(argc!=2){
+    printf("Error : 2 arguments required but %i given.\r\n",argc);
+  }else{
+    //read sector
+    if(1!=sscanf(argv[1],"%lu",&sector)){
+      //print error
+      printf("Error parsing sector \"%s\"\r\n",argv[1]);
+      return -1;
+    }
+    //read size
+    if(1!=sscanf(argv[2],"%u",&length)){
+      //print error
+      printf("Error parsing length \"%s\"\r\n",argv[2]);
+      return -1;
+    }
+  }
+  //get buffer, set a timeout of 2 secconds
+  buffer=BUS_get_buffer(CTL_TIMEOUT_DELAY,2048);
+  //check for error
+  if(buffer==NULL){
+    printf("Error : Timeout while waiting for buffer.\r\n");
+    return -1;
+  }
+  //print sector 
+  printf("Starting at MMC block %lu\r\n",sector);
+  for(;;){
+      for(i=0,check=0;i<length*512 && i<buffsize;i++){
+          buffer[i]=getchar();
+          check=check+buffer[i];
+          //printf("i = %i\r\n",i);
+          if(i%32==31){
+              printf("%u\r\n",check);
+              check=0;
+          }
+      }
+      if(length==1){
+        //number of blocks written
+        written=1;
+        //write single block
+        resp=mmcWriteBlock(sector,(unsigned char*)buffer);
+      }else{
+        written=((length<(buffsize/512))?length:(buffsize/512));
+        //write multiple blocks
+        resp=mmcWriteMultiBlock(sector,(unsigned char*)buffer,written);
+      }
+      //printf("%s\r\n",SD_error_str(resp));
+      //check if command was successful
+      if(resp){
+          printf("%s\r\n",SD_error_str(resp));
+          //free buffer
+          BUS_free_buffer();
+          //return
+         return resp;
+      }
+      //printf("Length = %u written %u\r\n",length,written);
+      if(written>=length){
+          //complete
+          break;
+      }
+      length-=written;
+      //printf("Length = %u written %u\r\n",length,written);
+  }
+  //free buffer
+  BUS_free_buffer();
+  return 0;
+}

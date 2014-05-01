@@ -32,6 +32,7 @@ int mmc_multiRTstCmd(char **argv, unsigned short argc);
 int mmc_reinit(char **argv, unsigned short argc);
 int mmcDMA_Cmd(char **argv, unsigned short argc);
 int mmcreg_Cmd(char**argv,unsigned short argc);
+int mmcdread_Cmd(char **argv, unsigned short argc);
 
 #define MMC_INIT_CHECK_COMMAND        {"mmcinitchk","\r\n\t""Check if the SD card is initialized",mmcInitChkCmd}
 #define MMC_WRITE_COMMAND             {"mmcw","[data,..]\r\n\t""write data to mmc card.",mmc_write}
@@ -46,8 +47,10 @@ int mmcreg_Cmd(char**argv,unsigned short argc);
 #define MMC_INIT_COMMAND              {"mmcinit","\r\n\t""initialize the mmc card the mmc card.",mmc_reinit}
 #define MMC_DMA_COMMAND               {"mmcDMA","\r\n\t""Check if DMA is enabled.",mmcDMA_Cmd}
 #define MMC_REG_COMMAND               {"mmcreg","[CID|CSD]\r\n\t""Read SD card registers.",mmcreg_Cmd}
+#define MMC_DREAD_COMMAND             {"mmcdread","sector size\r\n\t""Read data from terminal into sector",mmcdread_Cmd}
 
 //all SD card commands
+//MMC_DREAD is not included because it requires __getchar to be defined
 #define MMC_COMMANDS                  MMC_INIT_CHECK_COMMAND,MMC_WRITE_COMMAND,MMC_READ_COMMAND,MMC_DUMP_COMMAND,MMC_DAT_COMMAND,MMC_CARD_SIZE_COMMAND,MMC_ERASE_COMMAND,MMC_TEST_COMMAND,MMC_MW_TEST_COMMAND,MMC_MR_TEST_COMMAND,MMC_INIT_COMMAND,MMC_DMA_COMMAND,MMC_REG_COMMAND
 
 //ARCbus commands
