@@ -546,6 +546,7 @@ int mmcdread_Cmd(char **argv, unsigned short argc){
   //check for arguments
   if(argc!=2){
     printf("Error : 2 arguments required but %i given.\r\n",argc);
+    return -1;
   }else{
     //read sector
     if(1!=sscanf(argv[1],"%lu",&sector)){
