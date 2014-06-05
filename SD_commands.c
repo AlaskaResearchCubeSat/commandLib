@@ -578,6 +578,23 @@ int mmcdread_Cmd(char **argv, unsigned short argc){
           if(i%32==31){
               printf("%u\r\n",check);
               check=0;
+              //get response char
+              resp=getchar();
+              //check if c was sent to continue transaction
+              if(resp!='c'){
+                //c not sent
+                if(resp=='a'){
+                    //transaction aborted
+                    printf("Transfer Aborted\r\n");
+                }else{
+                    //unknown response
+                    printf("Unknown response \'%c\'\r\n",resp);
+                }
+                //free buffer
+                BUS_free_buffer();
+                //return
+                return 20; 
+              }
           }
       }
       if(length==1){
