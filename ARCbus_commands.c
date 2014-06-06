@@ -306,3 +306,119 @@ int ARCsearch_Cmd(char **argv,unsigned short argc){
   return 0;
 }
 
+int SPIdread_Cmd(char **argv, unsigned short argc){
+  int resp; 
+  char *buffer=NULL;
+  unsigned long sector;
+  unsigned int length,written;
+  unsigned short check;
+  unsigned char dest;
+  //data for sector command
+  unsigned char buff[BUS_I2C_CRC_LEN+5+BUS_I2C_HDR_LEN],*ptr;
+  //buffer size is not a multiple of 512, so find a size that is
+  const unsigned short buffsize=512*(BUS_get_buffer_size()/512);
+  int i;
+  //check for arguments
+  if(argc!=3){
+    printf("Error : 3 arguments required but %i given.\r\n",argc);
+    return -1;
+  }else{
+    //read address
+    dest=getI2C_addr(argv[1],0,busAddrSym);
+    if(dest==0xFF){
+      return -1;
+    }
+    //read sector
+    if(1!=sscanf(argv[2],"%lu",&sector)){
+      //print error
+      printf("Error parsing sector \"%s\"\r\n",argv[2]);
+      return -1;
+    }
+    //read size
+    if(1!=sscanf(argv[3],"%u",&length)){
+      //print error
+      printf("Error parsing length \"%s\"\r\n",argv[3]);
+      return -1;
+    }
+  }
+  //get buffer, set a timeout of 2 secconds
+  buffer=BUS_get_buffer(CTL_TIMEOUT_DELAY,2048);
+  //check for error
+  if(buffer==NULL){
+    printf("Error : Timeout while waiting for buffer.\r\n");
+    return -1;
+  }
+  //print sector 
+  printf("Starting at MMC block %lu\r\n",sector);
+  for(;;){
+      for(i=0,check=0;i<length*512 && i<buffsize;i++){
+          buffer[i]=getchar();
+          check=check+buffer[i];
+          //printf("i = %i\r\n",i);
+          if(i%32==31){
+              printf("%u\r\n",check);
+              check=0;
+              //get response char
+              resp=getchar();
+              //check if c was sent to continue transaction
+              if(resp!='c'){
+                //c not sent
+                if(resp=='a'){
+                    //transaction aborted
+                    printf("Transfer Aborted\r\n");
+                }else{
+                    //unknown response
+                    printf("Unknown response \'%c\'\r\n",resp);
+                }
+                //free buffer
+                BUS_free_buffer();
+                //return
+                return 20; 
+              }
+          }
+      }
+      
+      //TODO: send sector
+      ptr=BUS_cmd_init(buff,CMD_SPI_DATA_ACTION);
+      //write data to SD card when done
+      *ptr++=SPI_DAT_ACTION_SD_WRITE;
+      //send sector to write data to
+      ptr[3]=sector;
+      ptr[2]=sector>>8;
+      ptr[1]=sector>>16;
+      ptr[0]=sector>>24;
+      //send command
+      resp=BUS_cmd_tx(dest,buff,5,0,BUS_I2C_SEND_FOREGROUND);
+      //check if command was successful
+      if(resp){
+          printf("%s\r\n",BUS_error_str(resp));
+          //free buffer
+          BUS_free_buffer();
+          //return
+         return resp;
+      }
+      //get number of sectors that are being written
+      written=((length<(buffsize/512))?length:(buffsize/512));
+      //send data
+      resp=BUS_SPI_txrx(dest,(unsigned char*)buffer,NULL,written*512);
+      //printf("%s\r\n",BUS_error_str(resp));
+      //check if command was successful
+      if(resp){
+          printf("%s\r\n",BUS_error_str(resp));
+          //free buffer
+          BUS_free_buffer();
+          //return
+         return resp;
+      }
+      //printf("Length = %u written %u\r\n",length,written);
+      if(written>=length){
+          //complete
+          break;
+      }
+      length-=written;
+      //printf("Length = %u written %u\r\n",length,written);
+  }
+  //free buffer
+  BUS_free_buffer();
+  return 0;
+}
