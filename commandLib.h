@@ -67,8 +67,9 @@ int ARCsearch_Cmd(char **argv,unsigned short argc);
 #define ARC_SPI_COMMAND             {"SPI","addr [len]\r\n\t""Send data using SPI.",spiCmd}
 #define ARC_ASYNC_PROXY_COMMAND     {"async","[addr]\r\n\t""Open connection if address given. otherwise close connection.",asyncProxyCmd}
 #define ARC_SEARCH_COMMAND          {"search","\r\n\t""Find devices on the bus",ARCsearch_Cmd}
+#define ARC_SPI_DREAD               {"SPIdread","addr sector len""\r\n\t""Write data to SD card on another board",SPIdread_Cmd}
             
-#define ARC_COMMANDS                 ARC_RESET_COMMAND,ARC_TIME_COMMAND,ARC_TX_COMMAND,ARC_SPI_COMMAND,ARC_SEARCH_COMMAND 
+#define ARC_COMMANDS                 ARC_RESET_COMMAND,ARC_TIME_COMMAND,ARC_TX_COMMAND,ARC_SPI_COMMAND,ARC_SEARCH_COMMAND
 
 //Crossworks Tasking Library commands
 int priorityCmd(char **argv,unsigned short argc);

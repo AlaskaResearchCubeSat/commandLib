@@ -378,7 +378,7 @@ int SPIdread_Cmd(char **argv, unsigned short argc){
           }
       }
       
-      //TODO: send sector
+      //send sector
       ptr=BUS_cmd_init(buff,CMD_SPI_DATA_ACTION);
       //write data to SD card when done
       *ptr++=SPI_DAT_ACTION_SD_WRITE;
@@ -391,7 +391,7 @@ int SPIdread_Cmd(char **argv, unsigned short argc){
       resp=BUS_cmd_tx(dest,buff,5,0,BUS_I2C_SEND_FOREGROUND);
       //check if command was successful
       if(resp){
-          printf("%s\r\n",BUS_error_str(resp));
+          printf("Error : Failed to setup SPI transaction%s\r\n",BUS_error_str(resp));
           //free buffer
           BUS_free_buffer();
           //return
@@ -404,7 +404,7 @@ int SPIdread_Cmd(char **argv, unsigned short argc){
       //printf("%s\r\n",BUS_error_str(resp));
       //check if command was successful
       if(resp){
-          printf("%s\r\n",BUS_error_str(resp));
+          printf("Error : Failed to complete SPI transaction %s\r\n",BUS_error_str(resp));
           //free buffer
           BUS_free_buffer();
           //return
@@ -420,5 +420,6 @@ int SPIdread_Cmd(char **argv, unsigned short argc){
   }
   //free buffer
   BUS_free_buffer();
+  printf("Data Sent Successfully\r\n");
   return 0;
 }
