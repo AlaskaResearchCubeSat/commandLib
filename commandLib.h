@@ -60,6 +60,7 @@ int txCmd(char **argv,unsigned short argc);
 int spiCmd(char **argv,unsigned short argc);
 int asyncProxyCmd(char **argv,unsigned short argc);
 int ARCsearch_Cmd(char **argv,unsigned short argc);
+int SPIdread_Cmd(char **argv, unsigned short argc);
 
 #define ARC_RESET_COMMAND           {"reset","\r\n\t""reset the msp430.",restCmd}
 #define ARC_TIME_COMMAND            {"time","\r\n\t""Return current time.",timeCmd}
