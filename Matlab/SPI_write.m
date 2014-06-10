@@ -69,7 +69,19 @@ function SPI_write(sobj,dest,sector,data)
         %send c to continue
         fwrite(sobj,'c','uint8');
     end
-    %fgetl(sobj)
+    %get response
+    line=fgetl(sobj);
+    %remove newline
+    line=deblank(line);
+    %check if data was sent successfully
+    if(~strcmp('Data Sent Successfully',line))
+        %wait for command to finish
+        waitReady(sobj);
+        %throw error
+        error('Failed to complete transaction "%s"',line);
+    end
+    %wait for command to finish
+    waitReady(sobj);
 end
 
 function abort(sobj)
