@@ -148,17 +148,29 @@ int __putchar(int ch);
 int mmcdat_Cmd(char **argv, unsigned short argc){
   int resp; 
   char *buffer=NULL;
-  unsigned long sector=0;
+  unsigned long sector=0,len=1;
   unsigned int check;
-  int i;
+  int i,j,k,count=0;
+  //check how many sectors can fit in the buffer
+  const unsigned short buffsector=(BUS_get_buffer_size()/512);
   //check if sector given
   if(argc!=0){
     //read sector
     if(1!=sscanf(argv[1],"%lu",&sector)){
       //print error
-      printf("Error parsing sector \"%s\"\r\n",argv[1]);
+      printf("Error : failed to parse sector \"%s\"\r\n",argv[1]);
       return -1;
     }
+  }else{
+      printf("Error : %s requires one or two arguments\r\n",argv[0]);
+      return -1;
+  }
+  if(argc==2){
+     if(1!=sscanf(argv[2],"%lu",&len)){
+      //print error
+      printf("Error : failed to parse length \"%s\"\r\n",argv[1]);
+      return -1;
+    } 
   }
   //get buffer, set a timeout of 2 secconds
   buffer=BUS_get_buffer(CTL_TIMEOUT_DELAY,2048);
@@ -167,26 +179,36 @@ int mmcdat_Cmd(char **argv, unsigned short argc){
     printf("Error : Timeout while waiting for buffer.\r\n");
     return -1;
   }
-  //read from SD card
-  resp=mmcReadBlock(sector,(unsigned char*)buffer);
-  //check if command was successful
-  if(resp){
-      printf("%s\r\n",SD_error_str(resp));
-      //free buffer
-      BUS_free_buffer();
-      //return
-      return resp;
+  for(i=0;i<len;i+=count){
+      count=len-i;
+      count=count>buffsector?buffsector:count;
+      if(count==1){
+          //read from SD card
+          resp=mmcReadBlock(sector+i,(unsigned char*)buffer);
+      }else{
+        resp=mmcReadBlocks(sector+i,count,(unsigned char*)buffer);
+      }
+      //check if command was successful
+      if(resp){
+          printf("%s\r\n",SD_error_str(resp));
+          //free buffer
+          BUS_free_buffer();
+          //return
+          return resp;
+      }
+      for(j=0;j<count;j++){
+          //print sector 
+          printf("Sending MMC block %lu\r\n",sector+i+j);
+          //initialize check
+          check=0;
+          //print out buffer
+          for(k=0;k<512;k++){
+            putchar(buffer[k+512*j]);
+            check=check+buffer[k+512*j];
+          }
+          printf("Check =  %u\r\n",check);
+      }
   }
-  //print sector 
-  printf("Sending MMC block %lu\r\n",sector);
-  //initialize check
-  check=0;
-  //print out buffer
-  for(i=0;i<512;i++){
-    putchar(buffer[i]);
-    check=check+buffer[i];
-  }
-  printf("Check =  %u\r\n",check);
   //free buffer
   BUS_free_buffer();
   return 0;
