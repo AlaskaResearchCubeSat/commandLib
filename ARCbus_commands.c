@@ -423,3 +423,9 @@ int SPIdread_Cmd(char **argv, unsigned short argc){
   printf("Data Sent Successfully\r\n");
   return 0;
 }
+
+//print out ARClib version
+int ARClib_version_Cmd(char **argv, unsigned short argc){
+    printf("%s\r\n",ARClib_version);
+    return 0;
+}
