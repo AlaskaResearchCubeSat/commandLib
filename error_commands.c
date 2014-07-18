@@ -2,14 +2,75 @@
 #include <stdlib.h>
 #include <Error.h>
 #include <SDlib.h>
+#include <limits.h>
 
 #include "commandLib.h"
 
+//Named log levels
+static const unsigned char logLevels[]={ERR_LEV_DEBUG,ERR_LEV_INFO,ERR_LEV_WARNING,ERR_LEV_ERROR,ERR_LEV_CRITICAL};
+//Log level names
+static const char *const(levelNames[])={"debug","info","warn","error","critical"};
 
 //replay errors from the Error log
 int replayCmd(char **argv,unsigned short argc){
-  error_log_replay();
-  return 0;
+    unsigned short num=0;
+    unsigned char level=0;
+    unsigned long tmp;
+    char *end;
+    int found=0,i;
+    if(argc>=1){
+        //parse number
+        tmp=strtoul(argv[1],&end,10);
+        if(end==argv[1]){
+            //print error
+            printf("Error parsing num \"%s\"\r\n",argv[1]);
+            return -1;
+        }
+        if(*end){
+            printf("Error : unknown suffix \"%s\" while parsing num \"%s\".\r\n",end,argv[1]);
+            return -2;
+        }
+        //saturate
+        if(tmp>USHRT_MAX){
+            num=USHRT_MAX;
+        }else{
+             num=tmp;
+        }
+    }
+    if(argc>=2){
+        //parse number
+        tmp=strtoul(argv[2],&end,10);
+        if(end==argv[2]){
+            //check for matching level names
+            for(i=0,found=0;i<sizeof(logLevels)/sizeof(logLevels[0]);i++){
+                if(!strcmp(levelNames[i],argv[2])){
+                    //match found
+                    found=1;
+                    //set log level
+                    level=logLevels[i];
+                    //done
+                    break;
+                }
+            }
+            if(!found){
+                printf("Error : Could not parse log level \"%s\"\r\n",argv[2]);
+                return -2;
+            }
+        }
+        if(*end && !found){
+            printf("Error : unknown suffix \"%s\" while parsing log level \"%s\".\r\n",end,argv[2]);
+            return -2;
+        }
+        //saturate
+        if(tmp>UCHAR_MAX){
+            level=UCHAR_MAX;
+        }else{
+             level=tmp;
+        }
+    }
+    //replay log
+    error_log_replay(num,level);
+    return 0;
 }
 
 //clear saved errors from the SD card
@@ -24,8 +85,6 @@ int clearErrCmd(char **argv,unsigned short argc){
 
 //set which errors are logged
 int logCmd(char **argv,unsigned short argc){
-  const unsigned char logLevels[]={ERR_LEV_DEBUG,ERR_LEV_INFO,ERR_LEV_WARNING,ERR_LEV_ERROR,ERR_LEV_CRITICAL};
-  const char *(levelNames[])={"debug","info","warn","error","critical"};
   int found,i;
   char *end;
   unsigned char level;
