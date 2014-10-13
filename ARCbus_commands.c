@@ -292,7 +292,8 @@ int ARCsearch_Cmd(char **argv,unsigned short argc){
       }
       found++;
     }else if(ret!=ERR_I2C_NACK){
-      printf("Error sending to addr 0x%02X : %s\r\n",i,BUS_error_str(ret));
+      printf("Error sending to addr 0x%02X : %s\r\nError encountered, aborting scan\r\n",i,BUS_error_str(ret));
+      break;
     }
   }
   if(found==0){
