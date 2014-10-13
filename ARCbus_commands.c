@@ -35,13 +35,10 @@ int restCmd(char **argv,unsigned short argc){
     //setup packet 
     BUS_cmd_init(buff,CMD_RESET);
     resp=BUS_cmd_tx(addr,buff,0,0,BUS_I2C_SEND_FOREGROUND);
-    switch(resp){
-      case 0:
+     if(resp==RET_SUCCESS){
         puts("Command Sent Sucussfully.\r");
-      break;
-      case ERR_TIMEOUT:
-        puts("IIC timeout Error.\r");
-      break;
+     }else{
+        printf("Command not sent %s\r\n",BUS_error_str(resp));
     }
   }
   //reset if no arguments given or to reset all boards
