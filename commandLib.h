@@ -62,6 +62,7 @@ int asyncProxyCmd(char **argv,unsigned short argc);
 int ARCsearch_Cmd(char **argv,unsigned short argc);
 int SPIdread_Cmd(char **argv, unsigned short argc);
 int ARClib_version_Cmd(char **argv, unsigned short argc);
+int errReq_Cmd(char **argv,unsigned short argc);
 
 #define ARC_RESET_COMMAND           {"reset","\r\n\t""reset the msp430.",restCmd}
 #define ARC_TIME_COMMAND            {"time","\r\n\t""Return current time.",timeCmd}
@@ -71,9 +72,10 @@ int ARClib_version_Cmd(char **argv, unsigned short argc);
 #define ARC_SEARCH_COMMAND          {"search","\r\n\t""Find devices on the bus",ARCsearch_Cmd}
 #define ARC_SPI_DREAD               {"SPIdread","addr sector len""\r\n\t""Write data to SD card on another board",SPIdread_Cmd}
 #define ARC_VERSION_COMMAND         {"ARCversion","""\r\n\t""Print ARClib version",ARClib_version_Cmd}
+#define ARC_ERR_REQ_COMMAND         {"errReq","addr num level""\r\n\t""Request error log from other system",errReq_Cmd}
                            
             
-#define ARC_COMMANDS                 ARC_RESET_COMMAND,ARC_TIME_COMMAND,ARC_TX_COMMAND,ARC_SPI_COMMAND,ARC_SEARCH_COMMAND,ARC_VERSION_COMMAND
+#define ARC_COMMANDS                 ARC_RESET_COMMAND,ARC_TIME_COMMAND,ARC_TX_COMMAND,ARC_SPI_COMMAND,ARC_SEARCH_COMMAND,ARC_VERSION_COMMAND,ARC_ERR_REQ_COMMAND
 
 //Crossworks Tasking Library commands
 int priorityCmd(char **argv,unsigned short argc);

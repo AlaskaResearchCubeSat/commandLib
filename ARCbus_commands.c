@@ -427,3 +427,78 @@ int ARClib_version_Cmd(char **argv, unsigned short argc){
     printf("%s\r\n",ARClib_version);
     return 0;
 }
+
+//Error request command, requests an error from a given subsystem
+int errReq_Cmd(char **argv,unsigned short argc){
+    unsigned char addr;
+    unsigned long num,lev;
+    unsigned short size;
+    unsigned char cmd[BUS_I2C_HDR_LEN+4+BUS_I2C_CRC_LEN],*ptr;
+    char *end;
+    int resp;
+    //check number of arguments
+    //TODO: allow for optional arguments?
+    if(argc!=3){
+        printf("Error : %s requires 3 arguments but %i given\r\n",argv[0],argc);
+        return -1;
+    }
+    //get address
+    addr=getI2C_addr(argv[1],0,busAddrSym);
+    if(addr==0xFF){
+       return 1;
+    }
+    //get number of errors
+    num=strtoul(argv[2],&end,0);
+    if(end==argv[2]){
+        printf("Error : could not parse num \"%s\".\r\n",argv[2]);
+        return 2;
+    }
+    if(*end!=0){
+      printf("Error : unknown sufix \"%s\" at end of num \"%s\"\r\n",end,argv[2]);
+      return 3;
+    }
+    //multiply by error size to get size of block
+    num=num*sizeof(ERROR_DAT)+2;
+    //make sure that requested size will fit in buffer
+    //account for ID, num and CRC
+    if(num>BUS_get_buffer_size()-6){
+        printf("Warning : requested number of errors too large, reducing to fit buffer\r\n");
+        //set to buffer size
+        size=BUS_get_buffer_size()-6;
+    }else{
+        size=num;
+    }
+    //get error level
+    lev=strtoul(argv[3],&end,0);
+    if(end==argv[3]){
+        printf("Error : could not parse num \"%s\".\r\n",argv[3]);
+        return 2;
+    }
+    if(*end!=0){
+      printf("Error : unknown sufix \"%s\" at end of num \"%s\"\r\n",end,argv[3]);
+      return 3;
+    }  
+    if(lev>0xFF){
+        printf("Error : invalid error level 0x%02X\r\n",lev);
+        return 4;
+    }
+    //setup command to send to system
+    ptr=BUS_cmd_init(cmd,CMD_ERR_REQ);
+    //replay errors
+    *ptr++=ERR_REQ_REPLAY;
+    //send size
+    *ptr++=size>>8;
+    *ptr++=size;
+    //send level
+    *ptr++=lev;
+    //send packet
+    resp=BUS_cmd_tx(addr,cmd,4,0,BUS_I2C_SEND_FOREGROUND);
+    //check response
+    if(resp==RET_SUCCESS){
+        printf("Request sent succussfully\r\n");
+        //wait for SPI data to arrive
+        ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS,&SUB_events,SUB_EV_SPI,CTL_TIMEOUT_DELAY,1024);
+    }else{
+        printf("Failed to send request %s\r\n",BUS_error_str(resp));
+    }
+}
