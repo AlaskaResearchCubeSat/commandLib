@@ -278,7 +278,7 @@ int ARCsearch_Cmd(char **argv,unsigned short argc){
   int i,ret,found=0;
   //setup bogus command
   //TODO: perhaps there should be a PING command that is sort of a no-operation command
-  ptr=BUS_cmd_init(buff,7);
+  ptr=BUS_cmd_init(buff,CMD_PING);
   //loop through all I2C addresses and send a command to see if there is a device at that address
   for(i=0;i<=0x7F;i++){
     //send command
