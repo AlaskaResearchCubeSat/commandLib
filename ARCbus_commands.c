@@ -201,6 +201,7 @@ int asyncProxyCmd(char **argv,unsigned short argc){
    int err;
    CTL_EVENT_SET_t e=0,evt;
    unsigned char addr;
+   unsigned char buff[BUS_I2C_CRC_LEN+1+BUS_I2C_HDR_LEN],*ptr;
    if(argc>1){
     printf("Error : %s takes 0 or 1 arguments\r\n",argv[0]);
     return -1;
@@ -212,6 +213,21 @@ int asyncProxyCmd(char **argv,unsigned short argc){
     }
     //print out address
     printf("Using Address 0x%02X\r\n",addr);
+    //check if running with CDH lib
+    if(BUS_build()!=BUS_BUILD_CDH){
+        //For subsystem builds put board into test mode
+        ptr=BUS_cmd_init(buff,CMD_TEST_MODE);
+        //turn off timeslicing
+        *ptr=BUS_TM_NO_TIMESLICE;
+        //send command
+        err=BUS_cmd_tx(addr,buff,1,0,BUS_I2C_SEND_FOREGROUND);
+        //check result
+        if(err!=RET_SUCCESS){
+            //command failed, print error
+            printf("Error : failed to enable test mode %s",BUS_error_str(err));
+            return -3;
+        }
+    }
     //try to open async connection
     if((err=async_open(addr))){
       //print error
