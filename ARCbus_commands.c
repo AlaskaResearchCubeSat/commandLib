@@ -279,10 +279,16 @@ int asyncProxyCmd(char **argv,unsigned short argc){
     UCA1_setup_events(NULL,0,0);
     async_setup_close_event(NULL,0);
   }else{
-    if(async_close()){
-      printf("Error : async_close() failed.\r\n");
+    //close async
+    err=async_close();
+    //check for error
+    if(err){
+      //print error
+      printf("Error : async_close() failed %s\r\n",BUS_error_str(err));
+      return -4;
     }
   }
+  return 0;
 }
 
 //find devices on the ARCbus
