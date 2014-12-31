@@ -229,6 +229,8 @@ int asyncProxyCmd(char **argv,unsigned short argc){
             printf("Error : failed to enable test mode %s",BUS_error_str(err));
             return -3;
         }
+        //wait a bit to delay between packets
+        ctl_timeout_wait(ctl_get_current_time()+10);
     }
     //try to open async connection
     if((err=async_open(addr))){
