@@ -197,6 +197,8 @@ int spiCmd(char **argv,unsigned short argc){
 
 //connect to a remote board via async
 int asyncProxyCmd(char **argv,unsigned short argc){
+   //internal events for asyncProxy command
+   enum{ASYNC_CMD_EV_RX_ASYNC=1<<0,ASYNC_CMD_EV_RX_UART=1<<1,ASYNC_CMD_EV_CLOSE_ASYNC=1<<2,ASYNC_CMD_EV_ALL=(ASYNC_CMD_EV_RX_ASYNC|ASYNC_CMD_EV_RX_UART|ASYNC_CMD_EV_CLOSE_ASYNC)};
    char c;
    int err;
    CTL_EVENT_SET_t e=0,evt;
@@ -238,14 +240,14 @@ int asyncProxyCmd(char **argv,unsigned short argc){
     //Tell the user that async is open
     printf("async open use ^C to force quit\r\n");
     //setup events
-    async_setup_events(&e,0,1<<0);
-    UCA1_setup_events(&e,0,1<<1);
-    async_setup_close_event(&e,1<<2);
+    async_setup_events(&e,0,ASYNC_CMD_EV_RX_ASYNC);
+    UCA1_setup_events(&e,0,ASYNC_CMD_EV_RX_UART);
+    async_setup_close_event(&e,ASYNC_CMD_EV_CLOSE_ASYNC);
     for(;;){
       //wait for event
-      evt=ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS,&e,0x07,CTL_TIMEOUT_NONE,0);
+      evt=ctl_events_wait(CTL_EVENT_WAIT_ANY_EVENTS,&e,ASYNC_CMD_EV_ALL,CTL_TIMEOUT_NONE,0);
       //check for char from UART
-      if(evt&(1<<1)){
+      if(evt&ASYNC_CMD_EV_RX_UART){
         //get char
         c=UCA1_Getc();
         //check for ^C
@@ -261,13 +263,13 @@ int asyncProxyCmd(char **argv,unsigned short argc){
         async_TxChar(c);
       }
       //check for char from async
-      if(evt&(1<<0)){
+      if(evt&ASYNC_CMD_EV_RX_ASYNC){
         //get char from async
         c=async_Getc(); 
         //print char to UART
         UCA1_TxChar(c);
       }
-      if(evt&(1<<2)){
+      if(evt&ASYNC_CMD_EV_CLOSE_ASYNC){
         //print message
         printf("\r\nconnection closed remotely\r\n");
         //exit loop
