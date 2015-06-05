@@ -42,8 +42,7 @@ for config in ("MSP430 Release","MSP430 Debug"):
 	if rc!=0:
 		print("Error : project did not build exiting")
 		exit(rc)
-		
-	outname=basename+"_"+"_".join(config.split())+".hza"
+	outname=basename+"_"+"_".join(config.split()[1:])+".hza"
 	outpath=os.path.join(lib,outname)
 	inpath=os.path.join(inputDir,os.path.join(basename+" "+config,basename+".hza"))
 	print("Copying "+inpath+" to "+outpath)
