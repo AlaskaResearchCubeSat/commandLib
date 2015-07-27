@@ -120,13 +120,12 @@ int txCmd(char **argv,unsigned short argc){
     case RET_SUCCESS:
       printf("Command Sent Sucussfully.\r\n");
     break;
+    default:
+      printf("Error : unable to send command\r\n");
+      printf("Resp = %s (%i)\r\n",BUS_error_str(resp),resp);
+    break;
   }
-  //check if an error occured
-  if(resp<0){
-    printf("Error : unable to send command\r\n");
-  }
-  printf("Resp = %i\r\n",resp);
-  return 0;
+  return 0; 
 }
 
 //Send data over SPI
