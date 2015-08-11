@@ -215,22 +215,6 @@ int asyncProxyCmd(char **argv,unsigned short argc){
     //print out address
     printf("Using Address 0x%02X\r\n",addr);
     //check if running with CDH lib
-    if(BUS_build()!=BUS_BUILD_CDH){
-        //For subsystem builds put board into test mode
-        ptr=BUS_cmd_init(buff,CMD_TEST_MODE);
-        //turn off timeslicing
-        *ptr=BUS_TM_NO_TIMESLICE;
-        //send command
-        err=BUS_cmd_tx(addr,buff,1,0,BUS_I2C_SEND_FOREGROUND);
-        //check result
-        if(err!=RET_SUCCESS){
-            //command failed, print error
-            printf("Error : failed to enable test mode %s",BUS_error_str(err));
-            return -3;
-        }
-        //wait a bit to delay between packets
-        ctl_timeout_wait(ctl_get_current_time()+10);
-    }
     //try to open async connection
     if((err=async_open(addr))){
       //print error
