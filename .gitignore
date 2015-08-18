@@ -3,8 +3,8 @@
 *.hzs
 
 #build directories
-MSP430 Debug/
-MSP430 Release/
+commandLib MSP430 Debug/
+commandLib MSP430 Release/
 
 #matlab backup files
 *.asv
