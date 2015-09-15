@@ -300,7 +300,7 @@ int ARCsearch_Cmd(char **argv,unsigned short argc){
         printf("Device Found at ADDR = 0x%02X\r\n",i);
       }
       found++;
-    }else if(ret!=ERR_I2C_NACK){
+    }else if(ret!=ERR_I2C_NACK && ret!=ERR_I2C_TX_SELF){
       printf("Error sending to addr 0x%02X : %s\r\nError encountered, aborting scan\r\n",i,BUS_error_str(ret));
       break;
     }
