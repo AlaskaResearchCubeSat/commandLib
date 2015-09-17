@@ -133,8 +133,7 @@ int spiCmd(char **argv,unsigned short argc){
   unsigned char addr;
   char *end;
   unsigned short crc;
-  //static unsigned char rx[2048+2];
-  unsigned char *rx=NULL;
+  unsigned char *rx=NULL,*tx=NULL;
   int resp,i,len=100;
   if(argc<1){
     printf("Error : too few arguments.\r\n");
@@ -162,30 +161,24 @@ int spiCmd(char **argv,unsigned short argc){
     }
   }
   //get buffer, set a timeout of 2 secconds
-  rx=BUS_get_buffer(CTL_TIMEOUT_DELAY,2048);
+  tx=BUS_get_buffer(CTL_TIMEOUT_DELAY,2048);
   //check for error
-  if(rx==NULL){
+  if(tx==NULL){
     printf("Error : Timeout while waiting for buffer.\r\n");
     return -1;
   }
   //fill buffer with "random" data
   for(i=0;i<len;i++){
-    rx[i]=i;
+    tx[i]=i;
   }
   //send SPI data
-  resp=BUS_SPI_txrx(addr,rx,rx,len);
+  resp=BUS_SPI_txrx(addr,tx,NULL,len);
   //check return value
   if(resp==RET_SUCCESS){
       //print out data message
-      printf("SPI data recived\r\n");
-      //print out data
-      for(i=0;i<len;i++){
-        //printf("0x%02X ",rx[i]);
-        printf("%03i ",rx[i]);
-      }
-      printf("\r\n");
+      printf("SPI data sent\r\n");
   }else{
-    printf("%s\r\n",BUS_error_str(resp));
+      printf("%s\r\n",BUS_error_str(resp));
   }
   //free buffer
   BUS_free_buffer();
