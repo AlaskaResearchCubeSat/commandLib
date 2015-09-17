@@ -174,8 +174,6 @@ int spiCmd(char **argv,unsigned short argc){
   }
   //send SPI data
   resp=BUS_SPI_txrx(addr,rx,rx,len);
-  //TESTING: wait for transaction to fully complete
-  while(UCB0STAT&UCBBUSY);
   //check return value
   if(resp==RET_SUCCESS){
       //print out data message
