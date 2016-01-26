@@ -219,11 +219,16 @@ int mmc_cardSize(char **argv, unsigned short argc){
   unsigned long size;
   unsigned char CSD[16];
   int resp;
-  resp=mmcReadReg(0x40|9,CSD);
-  size=mmcGetCardSize(CSD);
+  //read CSD
+  resp=mmcReadReg(MMC_REG_CSD,CSD);
+  //check for problems
   if(resp==MMC_SUCCESS){
-    printf("card size = %luKB\r\n",size);
+    //compute card size in MB
+    size=mmcGetCardSize(CSD);
+    //print size
+    printf("card size = %lu MB\r\n",size);
   }else{
+    //print error
     printf("%s\r\n",SD_error_str(resp));
   }
   return 0;
