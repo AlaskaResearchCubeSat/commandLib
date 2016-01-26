@@ -34,7 +34,7 @@ int restCmd(char **argv,unsigned short argc){
     }
     //setup packet 
     BUS_cmd_init(buff,CMD_RESET);
-    resp=BUS_cmd_tx(addr,buff,0,0,BUS_I2C_SEND_FOREGROUND);
+    resp=BUS_cmd_tx(addr,buff,0,0);
      if(resp==RET_SUCCESS){
         puts("Command Sent Sucussfully.\r");
      }else{
@@ -115,7 +115,7 @@ int txCmd(char **argv,unsigned short argc){
     }
   }
   len=i;
-  resp=BUS_cmd_tx(addr,buff,len,nack,BUS_I2C_SEND_FOREGROUND);
+  resp=BUS_cmd_tx(addr,buff,len,nack);
   switch(resp){
     case RET_SUCCESS:
       printf("Command Sent Sucussfully.\r\n");
@@ -282,7 +282,7 @@ int ARCsearch_Cmd(char **argv,unsigned short argc){
   //loop through all I2C addresses and send a command to see if there is a device at that address
   for(i=0;i<=0x7F;i++){
     //send command
-    ret=BUS_cmd_tx(i,buff,0,0,BUS_I2C_SEND_FOREGROUND);
+    ret=BUS_cmd_tx(i,buff,0,0);
     if(ret==RET_SUCCESS){
       name=I2C_addr_revlookup(i,busAddrSym);
       if(name!=NULL){
@@ -386,7 +386,7 @@ int SPIdread_Cmd(char **argv, unsigned short argc){
       ptr[1]=sector>>16;
       ptr[0]=sector>>24;
       //send command
-      resp=BUS_cmd_tx(dest,buff,5,0,BUS_I2C_SEND_FOREGROUND);
+      resp=BUS_cmd_tx(dest,buff,5,0);
       //check if command was successful
       if(resp){
           printf("Error : Failed to setup SPI transaction%s\r\n",BUS_error_str(resp));
@@ -492,7 +492,7 @@ int errReq_Cmd(char **argv,unsigned short argc){
     //send level
     *ptr++=lev;
     //send packet
-    resp=BUS_cmd_tx(addr,cmd,4,0,BUS_I2C_SEND_FOREGROUND);
+    resp=BUS_cmd_tx(addr,cmd,4,0);
     //check response
     if(resp==RET_SUCCESS){
         printf("Request sent succussfully\r\n");
