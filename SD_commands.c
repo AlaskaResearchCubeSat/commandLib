@@ -342,7 +342,7 @@ int mmc_TstCmd(char **argv, unsigned short argc){
     //write data
     resp=mmcWriteBlock(i,(unsigned char*)buffer);
     if(resp!=MMC_SUCCESS){
-      printf("Error : write failure for sector %i\r\nresp = 0x%04X\r\n%s\r\n",i,resp,SD_error_str(resp));
+      printf("Error : write failure for sector %li\r\nresp = 0x%04X\r\n%s\r\n",i,resp,SD_error_str(resp));
       //free buffer
       BUS_free_buffer();
       return -1;
@@ -355,7 +355,7 @@ int mmc_TstCmd(char **argv, unsigned short argc){
     //read data from card
     resp=mmcReadBlock(i,(unsigned char*)buffer);
     if(resp!=MMC_SUCCESS){
-      printf("Error : read failure for sector %i\r\nresp = 0x%04X\r\n%s\r\n",i,resp,SD_error_str(resp));
+      printf("Error : read failure for sector %li\r\nresp = 0x%04X\r\n%s\r\n",i,resp,SD_error_str(resp));
       //free buffer
       BUS_free_buffer();
       return -1;
@@ -370,7 +370,7 @@ int mmc_TstCmd(char **argv, unsigned short argc){
       lfsr=dat_next(lfsr,dat);
     }
     if(count!=0){
-      printf("%i errors found in sector %i\r\n",count,i);
+      printf("%i errors found in sector %li\r\n",count,i);
       tc+=count;
     }
   }
