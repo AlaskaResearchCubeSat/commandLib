@@ -312,7 +312,7 @@ int mmc_TstCmd(char **argv, unsigned short argc){
   }
   if(!have_seed){
     //seed LFSR from TAR
-    seed=TA0R;   //not concerned about correct value so don't worry about diffrent clocks
+    seed=TA1R;   //not concerned about correct value so don't worry about diffrent clocks
     //make sure seed is not zero
     if(seed==0){
       seed=1;
