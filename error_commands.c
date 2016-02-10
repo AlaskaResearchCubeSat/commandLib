@@ -86,6 +86,7 @@ int clearErrCmd(char **argv,unsigned short argc){
 //set which errors are logged
 int logCmd(char **argv,unsigned short argc){
   int found,i;
+  size_t len;
   char *end;
   unsigned char level;
   //check for too many arguments
@@ -108,13 +109,32 @@ int logCmd(char **argv,unsigned short argc){
     if(end==argv[1]){
       //check for matching level names
       for(i=0,found=0;i<sizeof(logLevels)/sizeof(logLevels[0]);i++){
-        if(!strcmp(levelNames[i],argv[1])){
-          //match found
-          found=1;
-          //set log level
-          level=logLevels[i];
-          //done
-          break;
+        //get string length
+        len=strlen(levelNames[i]);
+        //check if the argument starts with the name
+        if(!strncmp(levelNames[i],argv[1],len)){
+          //check if this is the end
+          if(argv[1][len]=='\0'){
+            //match found
+            found=1;
+            //set log level
+            level=logLevels[i];
+            //done
+            break;
+          }else if(argv[1][len]=='+'){
+            level=strtoul(&argv[1][len+1],&end,0);
+            //check for suffix
+            if(*end!=0){
+              printf("Error : unknown sufix \"%s\" at end of log level \"%s\"\r\n",end,argv[1]);
+              return -3;
+            }
+            //match found
+            found=1;
+            //add base level
+            level+=logLevels[i];
+            //done
+            break;
+          }
         }
       }
       if(!found){
