@@ -96,7 +96,7 @@ int clearErrCmd(char **argv,unsigned short argc);
 int logCmd(char **argv,unsigned short argc);
 
 #define CLEAR_ERROR_COMMAND         {"clear","\r\n\t""Clear all saved errors on the SD card",clearErrCmd}
-#define REPLAY_ERROR_COMMAND        {"replay","\r\n\t""Replay errors from log",replayCmd}
+#define REPLAY_ERROR_COMMAND        {"replay","[num [level]]\r\n\t""Replay num errors from log",replayCmd}
 #define ERROR_LOG_LEVEL_COMMAND     {"log","[level]\r\n\t""get/set log level",logCmd}
 
 #define ERROR_COMMANDS              CLEAR_ERROR_COMMAND,REPLAY_ERROR_COMMAND,ERROR_LOG_LEVEL_COMMAND
